@@ -8,7 +8,15 @@ import {Provider} from 'react-redux'
 import searchReducer from './reducers/searchReducer'
 import './index.scss'
 
-const store = createStore(searchReducer, applyMiddleware(thunk))
+const middlewares = [];
+
+if (process.env.NODE_ENV === `development`) {
+    const { logger } = require(`redux-logger`);
+    middlewares.push(logger);
+}
+middlewares.push(thunk)
+
+const store = createStore(searchReducer, applyMiddleware(...middlewares));
 
 class App extends Component {
     render() {

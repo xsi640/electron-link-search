@@ -4,7 +4,7 @@ export const searchActions = {
     search(parameters){
         return dispatch => {
             let index = parameters.pageIndex;
-            ipcRenderer.on('search', (event, args) => {
+            function searchListener(event, args) {
                 if (typeof args.err === 'undefined') {
                     dispatch({
                         type: 'search',
@@ -17,8 +17,10 @@ export const searchActions = {
                     })
 
                     index++;
-                    if (index <= parameters.pageSize)
+                    if (index <= parameters.pageSize) {
+                        ipcRenderer.once('search', searchListener);
                         ipcRenderer.send('search', Object.assign(parameters, {pageIndex: index}))
+                    }
 
                 } else {
                     dispatch({
@@ -29,8 +31,8 @@ export const searchActions = {
                         }
                     })
                 }
-            });
-
+            }
+            ipcRenderer.once('search', searchListener);
             ipcRenderer.send('search', Object.assign(parameters, {pageIndex: index}))
 
             return {

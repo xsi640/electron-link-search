@@ -23,7 +23,9 @@ function createWindow() {
         slashes: true
     }))
 
-    win.webContents.openDevTools()
+    if (process.env.NODE_ENV === `development`) {
+        win.webContents.openDevTools()
+    }
 
     win.on('closed', () => {
         win = null
